@@ -43,10 +43,29 @@ Blog.init(
   }
 );
 
+async function printBlogs() {
+  try {
+    await sequelize.authenticate();
+    console.log(
+      "Connection to the database has been established successfully."
+    );
+
+    const blogs = await Blog.findAll();
+
+    console.log("Blogs:");
+    blogs.forEach((blog) => {
+      console.log(`${blog.author}: '${blog.title}', ${blog.likes} likes`);
+    });
+  } catch (error) {
+    console.error("Unable to connect to the database:", error);
+  } finally {
+    await sequelize.close();
+  }
+}
+
+printBlogs();
+
 app.get("/api/blogs", async (req, res) => {
-  // const notes = await sequelize.query("SELECT * FROM blogs", {
-  //   type: QueryTypes.SELECT,
-  // });
   const notes = await Blog.findAll();
 
   res.json(notes);
