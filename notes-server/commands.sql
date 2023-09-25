@@ -14,8 +14,9 @@ select * from blogs;
 //! Insert data values into table 
 
 INSERT INTO blogs (author, url, title, likes)
-VALUES ('Author 1', 'https://example.com/blog1', 'Blog Title 1', 10);
-
+VALUES ('Author 1', 'https://dulalAPI,com', 'Blog Title 1', 10);
 
 INSERT INTO blogs (author, url, title, likes)
-VALUES ('Author 2', 'https/myBlog.com', 'Blog Title 2', 5);
+VALUES ('Author 2', 'https://myBlog.com', 'Blog Title 2', 100);
+
+

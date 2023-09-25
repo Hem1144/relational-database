@@ -1,9 +1,9 @@
 require("dotenv").config();
-// const { Sequelize, QueryTypes } = require("sequelize");
 const { Sequelize, Model, DataTypes } = require("sequelize");
 
 const express = require("express");
 const app = express();
+app.use(express.json());
 
 const sequelize = new Sequelize(process.env.DATABASE_URL, {
   dialectOptions: {
@@ -15,13 +15,9 @@ const sequelize = new Sequelize(process.env.DATABASE_URL, {
 });
 
 class Blog extends Model {}
+
 Blog.init(
   {
-    id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
-    },
     author: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -29,6 +25,18 @@ Blog.init(
     title: {
       type: DataTypes.STRING,
       allowNull: false,
+    },
+    url: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        isUrl: {
+          msg: "URL must be a valid URL",
+        },
+        notEmpty: {
+          msg: "URL cannot be empty",
+        },
+      },
     },
     likes: {
       type: DataTypes.INTEGER,
@@ -43,13 +51,11 @@ Blog.init(
   }
 );
 
-app.get("/api/blogs", async (req, res) => {
-  // const notes = await sequelize.query("SELECT * FROM blogs", {
-  //   type: QueryTypes.SELECT,
-  // });
-  const notes = await Blog.findAll();
+Blog.sync();
 
-  res.json(notes);
+app.get("/api/blogs", async (req, res) => {
+  const blogs = await Blog.findAll();
+  res.json(blogs);
 });
 
 app.get("/api/blogs/:id", async (req, res) => {
@@ -57,7 +63,46 @@ app.get("/api/blogs/:id", async (req, res) => {
   if (blog) {
     res.json(blog);
   } else {
-    res.status(404).send("no data found");
+    res.status(404).send("No data found");
+  }
+});
+
+app.post("/api/blogs", async (req, res) => {
+  const { author, title, url, likes } = req.body;
+  try {
+    const newBlog = await Blog.create({ author, title, url, likes });
+    res.json(newBlog);
+  } catch (error) {
+    res.status(500).send("Error creating blog");
+  }
+});
+
+app.put("/api/blogs/:id", async (req, res) => {
+  const { id } = req.params;
+  const { author, title, likes } = req.body;
+  try {
+    const blog = await Blog.findByPk(id);
+    if (!blog) {
+      return res.status(404).send("Blog not found");
+    }
+    await blog.update({ author, title, likes });
+    res.json(blog);
+  } catch (error) {
+    res.status(500).send("Error updating blog");
+  }
+});
+
+app.delete("/api/blogs/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const blog = await Blog.findByPk(id);
+    if (!blog) {
+      return res.status(404).send("Blog not found");
+    }
+    await blog.destroy();
+    res.json({ message: "Blog deleted successfully" });
+  } catch (error) {
+    res.status(500).send("Error deleting blog");
   }
 });
 
