@@ -2,7 +2,7 @@ GET http://localhost:3001/api/blogs
 
 ###
 
-GET http://localhost:3001/api/blogs/1
+GET http://localhost:3001/api/blogs/2
 ###
 
 ###
@@ -10,9 +10,9 @@ POST http://localhost:3001/api/blogs
 Content-Type: application/json
 
 {
-  "author": "Hemlal Dulal",
-  "title": "This is dulal note",
-  "url": "https://hemlaldulal.com",
+  "author": "Hemlal Dulal1",
+  "title": "This is dulal note1",
+  "url": "https://hemlaldulal.com1",
   "likes": 100
 }
 

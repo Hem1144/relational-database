@@ -79,13 +79,13 @@ app.post("/api/blogs", async (req, res) => {
 
 app.put("/api/blogs/:id", async (req, res) => {
   const { id } = req.params;
-  const { author, title, likes } = req.body;
+  const { author, title, url, likes } = req.body;
   try {
     const blog = await Blog.findByPk(id);
     if (!blog) {
       return res.status(404).send("Blog not found");
     }
-    await blog.update({ author, title, likes });
+    await blog.update({ author, title, url, likes });
     res.json(blog);
   } catch (error) {
     res.status(500).send("Error updating blog");
